@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="banner.jpg" alt="ebnur031x — AI Developer">
+  <img src="6e901f8e-7364-441a-8392-1bac62bd3112.png" alt="ebnur031x — AI Developer">
 </p>
 
 <h1 align="center">Hey, I'm Ebnur 👋</h1>
