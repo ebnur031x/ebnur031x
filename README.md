@@ -5,11 +5,11 @@
 <h1 align="center">Hey, I'm Ebnur 👋</h1>
 
 <p align="center">
-  <b>CS Student · AI Enthusiast · Builder</b>
+  <b>CS Student • AI • Software • Builder</b>
 </p>
 
 <p align="center">
-  I like understanding how things work, building useful things, and learning by doing.
+  I like understanding how things work, building useful software, and exploring AI.
 </p>
 
 ---
@@ -18,29 +18,38 @@
 
 - Data Structures & Algorithms
 - Machine Learning & Neural Networks
-- AI Engineering
-- Building real-world software
+- AI engineering and developer tools
+- Building projects and shipping them
 
-### 🔨 Projects
+### 🛠️ Toolbox
 
-| Project | What I'm learning |
-|---|---|
-| 💸 [Spendly](https://github.com/ebnur031x/spendly) | Building a real application |
-| 🧩 [CSE220 Data Structures](https://github.com/ebnur031x/cse220-data-structures) | Data structures in Java |
-| ⚡ [CSE221 Algorithms](https://github.com/ebnur031x/cse221-algorithms) | Algorithms & problem solving |
+<p>
+  <img src="https://skillicons.dev/icons?i=java,python,git,github,vscode,linux" alt="Java, Python, Git, GitHub, VS Code, Linux">
+</p>
 
-### ⚙️ Tools I use
+### 📊 GitHub
 
-`Java` · `Python` · `Git` · `GitHub` · `VS Code` · `AI/LLMs`
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=ebnur031x&show_icons=true&hide_border=true&theme=transparent" height="170" alt="GitHub stats">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ebnur031x&layout=compact&hide_border=true&theme=transparent" height="170" alt="Top languages">
+</p>
 
-### 🚀 Philosophy
+<p align="center">
+  <img src="https://streak-stats.demolab.com?user=ebnur031x&hide_border=true&theme=transparent" alt="GitHub streak">
+</p>
 
-> **Build. Learn. Ship.**
+### 🐍 Contribution snake
 
-I don't want to just learn technology — I want to understand it deeply enough to build with it.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-contribution-grid-snake-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-contribution-grid-snake.svg">
+    <img src="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-contribution-grid-snake.svg" alt="Animated contribution snake">
+  </picture>
+</p>
 
 ---
 
 <p align="center">
-  <sub>Still learning. Still building. 🚀</sub>
+  <i>Build. Learn. Ship.</i>
 </p>
