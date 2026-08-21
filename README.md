@@ -24,18 +24,13 @@
 ### 🛠️ Toolbox
 
 <p>
-  <img src="https://skillicons.dev/icons?i=java,python,git,github,vscode,linux" alt="Java, Python, Git, GitHub, VS Code, Linux">
+  <img src="https://skillicons.dev/icons?i=java,python,git,github,vscode,linux,markdown,latex,bash" alt="Java, Python, Git, GitHub, VS Code, Linux, Markdown, LaTeX, Bash">
 </p>
 
 ### 📊 GitHub
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=ebnur031x&show_icons=true&hide_border=true&theme=transparent" height="170" alt="GitHub stats">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ebnur031x&layout=compact&hide_border=true&theme=transparent" height="170" alt="Top languages">
-</p>
-
-<p align="center">
-  <img src="https://streak-stats.demolab.com?user=ebnur031x&hide_border=true&theme=transparent" alt="GitHub streak">
+  <img src="profile-stats/dashboard.svg" alt="Live GitHub profile dashboard">
 </p>
 
 ### 🐍 Contribution snake
