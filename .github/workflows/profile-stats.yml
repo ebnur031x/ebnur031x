@@ -1,4 +1,4 @@
-name: Update profile stats
+name: Update profile dashboard
 
 on:
   schedule:
@@ -9,91 +9,83 @@ permissions:
   contents: write
 
 jobs:
-  stats:
+  dashboard:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout profile repository
         uses: actions/checkout@v4
 
-      - name: Generate live profile stats
+      - name: Build live dashboard
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p profile-stats
           python3 - <<'PY'
           import json, os, subprocess
-          from datetime import datetime, timezone
+          from pathlib import Path
 
           user = "ebnur031x"
           token = os.environ["GH_TOKEN"]
 
-          def gh(path):
-              out = subprocess.check_output([
-                  "curl", "-fsSL",
-                  "-H", f"Authorization: Bearer {token}",
-                  "-H", "Accept: application/vnd.github+json",
-                  f"https://api.github.com{path}"
-              ])
-              return json.loads(out)
+          def api(path):
+              p = subprocess.run(["curl", "-fsSL", "-H", f"Authorization: Bearer {token}", "-H", "Accept: application/vnd.github+json", f"https://api.github.com{path}"], capture_output=True, text=True, check=True)
+              return json.loads(p.stdout)
 
-          repos = gh(f"/users/{user}/repos?per_page=100&sort=updated")
-          public_repos = [r for r in repos if not r.get("fork")]
-          stars = sum(r.get("stargazers_count", 0) for r in public_repos)
+          repos = [r for r in api(f"/users/{user}/repos?per_page=100&sort=updated") if not r.get("fork")]
+          stars = sum(r.get("stargazers_count", 0) for r in repos)
+          commits = api(f"/search/commits?q=author:{user}&per_page=1").get("total_count", 0)
+          prs = api(f"/search/issues?q=author:{user}+type:pr&per_page=1").get("total_count", 0)
+          issues = api(f"/search/issues?q=author:{user}+type:issue&per_page=1").get("total_count", 0)
 
-          languages = {}
-          for r in public_repos:
+          langs = {}
+          for r in repos:
               try:
-                  data = gh(f"/repos/{user}/{r['name']}/languages")
-                  for lang, value in data.items():
-                      languages[lang] = languages.get(lang, 0) + value
+                  for k, v in api(f"/repos/{user}/{r['name']}/languages").items():
+                      langs[k] = langs.get(k, 0) + v
               except Exception:
                   pass
+          total = sum(langs.values()) or 1
+          top = sorted(langs.items(), key=lambda x: x[1], reverse=True)[:5]
 
-          total_lang = sum(languages.values()) or 1
-          top = sorted(languages.items(), key=lambda x: x[1], reverse=True)[:5]
+          query = '''query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}'''
+          payload = json.dumps({"query": query, "variables": {"login": user}})
+          p = subprocess.run(["curl", "-fsSL", "-X", "POST", "-H", f"Authorization: bearer {token}", "-H", "Content-Type: application/json", "https://api.github.com/graphql", "-d", payload], capture_output=True, text=True, check=True)
+          try:
+              weeks = json.loads(p.stdout)["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+              days = [d for w in weeks for d in w["contributionDays"]]
+          except Exception:
+              days = []
+          current = 0
+          for d in reversed(days):
+              if d["contributionCount"] > 0: current += 1
+              elif current: break
+          longest = run = 0
+          for d in days:
+              if d["contributionCount"] > 0:
+                  run += 1; longest = max(longest, run)
+              else: run = 0
 
-          lines = []
-          lines.append("<!-- PROFILE_STATS_START -->")
-          lines.append("<p align=\"center\"><b>Live GitHub stats</b></p>")
-          lines.append("<p align=\"center\">")
-          lines.append(f"  <img src=\"https://img.shields.io/badge/Public%20repos-{len(public_repos)}-111111?style=flat-square\" alt=\"Public repositories\">")
-          lines.append(f"  <img src=\"https://img.shields.io/badge/Stars-{stars}-111111?style=flat-square\" alt=\"Stars\">")
-          lines.append(f"  <img src=\"https://img.shields.io/badge/Updated-{datetime.now(timezone.utc).strftime('%Y--%m--%d')}-111111?style=flat-square\" alt=\"Last update\">")
-          lines.append("</p>")
-          lines.append("<p align=\"center\"><b>Languages</b><br>")
-          for lang, value in top:
-              pct = value / total_lang * 100
-              lines.append(f"{lang}: {pct:.1f}% &nbsp; ")
-          lines.append("</p>")
-          lines.append("<!-- PROFILE_STATS_END -->")
-
-          with open("profile-stats/stats.md", "w") as f:
-              f.write("\n".join(lines) + "\n")
+          def esc(s): return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+          colors = ["#f59e0b", "#3b82f6", "#22c55e", "#a78bfa", "#94a3b8"]
+          svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430">', '<rect width="1100" height="430" rx="18" fill="#05080d" stroke="#202938"/>', '<text x="32" y="42" fill="#f8fafc" font-family="Arial,sans-serif" font-size="22" font-weight="700">📊 GitHub</text>']
+          for x, title in [(32, "📊 GitHub Stats"), (382, "🔥 GitHub Streak"), (732, "💻 Top Languages")]:
+              svg += [f'<rect x="{x}" y="68" width="336" height="190" rx="12" fill="#0b1119" stroke="#273244"/>', f'<text x="{x+20}" y="99" fill="#e2e8f0" font-family="Arial,sans-serif" font-size="16" font-weight="700">{title}</text>']
+          stats = [("Total Stars", stars), ("Total Commits", commits), ("Repositories", len(repos)), ("Pull Requests", prs), ("Issues", issues)]
+          for i, (label, val) in enumerate(stats):
+              y = 132 + i*23
+              svg += [f'<text x="52" y="{y}" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">{esc(label)}</text>', f'<text x="330" y="{y}" text-anchor="end" fill="#60a5fa" font-family="Arial,sans-serif" font-size="14" font-weight="700">{val}</text>']
+          svg += [f'<text x="550" y="165" text-anchor="middle" fill="#4ade80" font-family="Arial,sans-serif" font-size="54" font-weight="700">{current}</text>', '<text x="550" y="192" text-anchor="middle" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">days in a row</text>', f'<text x="550" y="220" text-anchor="middle" fill="#94a3b8" font-family="Arial,sans-serif" font-size="13">Longest: {longest} days</text>']
+          for i, (lang, value) in enumerate(top):
+              y = 120 + i*27; pct = value / total * 100; width = 175 * pct / 100
+              svg += [f'<circle cx="752" cy="{y-5}" r="7" fill="{colors[i]}"/>', f'<text x="770" y="{y}" fill="#e2e8f0" font-family="Arial,sans-serif" font-size="13">{esc(lang)}</text>', f'<rect x="850" y="{y-13}" width="175" height="10" rx="5" fill="#27303b"/>', f'<rect x="850" y="{y-13}" width="{width:.1f}" height="10" rx="5" fill="{colors[i]}"/>', f'<text x="1040" y="{y}" text-anchor="end" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="12">{pct:.1f}%</text>']
+          svg += ['<text x="32" y="300" fill="#f8fafc" font-family="Arial,sans-serif" font-size="22" font-weight="700">🐍 Contribution snake</text>', '<text x="32" y="326" fill="#94a3b8" font-family="Arial,sans-serif" font-size="13">Live data • automatically updated by GitHub Actions</text>', '<line x1="32" y1="350" x2="1068" y2="350" stroke="#202938"/>', '<text x="550" y="388" text-anchor="middle" fill="#64748b" font-family="Arial,sans-serif" font-size="12">Updated automatically from GitHub</text>', '</svg>']
+          Path("profile-stats").mkdir(exist_ok=True)
+          Path("profile-stats/dashboard.svg").write_text("\n".join(svg))
           PY
 
-      - name: Update README stats block
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          readme = Path("README.md")
-          stats = Path("profile-stats/stats.md").read_text()
-          text = readme.read_text()
-          start = "<!-- PROFILE_STATS_START -->"
-          end = "<!-- PROFILE_STATS_END -->"
-          if start in text and end in text:
-              before = text.split(start)[0]
-              after = text.split(end, 1)[1]
-              text = before + stats.strip() + after
-          else:
-              marker = "### 🐍 Contribution snake"
-              text = text.replace(marker, stats + "\n\n" + marker)
-          readme.write_text(text)
-          PY
-
-      - name: Commit generated stats
+      - name: Commit dashboard
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md profile-stats/stats.md
-          git diff --cached --quiet || git commit -m "Update live profile stats"
+          git add profile-stats/dashboard.svg
+          git diff --cached --quiet || git commit -m "Update live profile dashboard"
           git push
