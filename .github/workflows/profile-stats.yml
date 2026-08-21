@@ -1,0 +1,99 @@
+name: Update profile stats
+
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout profile repository
+        uses: actions/checkout@v4
+
+      - name: Generate live profile stats
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p profile-stats
+          python3 - <<'PY'
+          import json, os, subprocess
+          from datetime import datetime, timezone
+
+          user = "ebnur031x"
+          token = os.environ["GH_TOKEN"]
+
+          def gh(path):
+              out = subprocess.check_output([
+                  "curl", "-fsSL",
+                  "-H", f"Authorization: Bearer {token}",
+                  "-H", "Accept: application/vnd.github+json",
+                  f"https://api.github.com{path}"
+              ])
+              return json.loads(out)
+
+          repos = gh(f"/users/{user}/repos?per_page=100&sort=updated")
+          public_repos = [r for r in repos if not r.get("fork")]
+          stars = sum(r.get("stargazers_count", 0) for r in public_repos)
+
+          languages = {}
+          for r in public_repos:
+              try:
+                  data = gh(f"/repos/{user}/{r['name']}/languages")
+                  for lang, value in data.items():
+                      languages[lang] = languages.get(lang, 0) + value
+              except Exception:
+                  pass
+
+          total_lang = sum(languages.values()) or 1
+          top = sorted(languages.items(), key=lambda x: x[1], reverse=True)[:5]
+
+          lines = []
+          lines.append("<!-- PROFILE_STATS_START -->")
+          lines.append("<p align=\"center\"><b>Live GitHub stats</b></p>")
+          lines.append("<p align=\"center\">")
+          lines.append(f"  <img src=\"https://img.shields.io/badge/Public%20repos-{len(public_repos)}-111111?style=flat-square\" alt=\"Public repositories\">")
+          lines.append(f"  <img src=\"https://img.shields.io/badge/Stars-{stars}-111111?style=flat-square\" alt=\"Stars\">")
+          lines.append(f"  <img src=\"https://img.shields.io/badge/Updated-{datetime.now(timezone.utc).strftime('%Y--%m--%d')}-111111?style=flat-square\" alt=\"Last update\">")
+          lines.append("</p>")
+          lines.append("<p align=\"center\"><b>Languages</b><br>")
+          for lang, value in top:
+              pct = value / total_lang * 100
+              lines.append(f"{lang}: {pct:.1f}% &nbsp; ")
+          lines.append("</p>")
+          lines.append("<!-- PROFILE_STATS_END -->")
+
+          with open("profile-stats/stats.md", "w") as f:
+              f.write("\n".join(lines) + "\n")
+          PY
+
+      - name: Update README stats block
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          readme = Path("README.md")
+          stats = Path("profile-stats/stats.md").read_text()
+          text = readme.read_text()
+          start = "<!-- PROFILE_STATS_START -->"
+          end = "<!-- PROFILE_STATS_END -->"
+          if start in text and end in text:
+              before = text.split(start)[0]
+              after = text.split(end, 1)[1]
+              text = before + stats.strip() + after
+          else:
+              marker = "### 🐍 Contribution snake"
+              text = text.replace(marker, stats + "\n\n" + marker)
+          readme.write_text(text)
+          PY
+
+      - name: Commit generated stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md profile-stats/stats.md
+          git diff --cached --quiet || git commit -m "Update live profile stats"
+          git push
