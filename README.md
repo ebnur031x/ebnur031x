@@ -36,11 +36,7 @@
 ### 🐍 Contribution snake
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake-dark.svg?v=3">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake.svg?v=3">
-    <img src="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake.svg?v=3" alt="Animated contribution snake">
-  </picture>
+  <img src="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/custom-snake.svg?v=1" alt="Live custom contribution snake">
 </p>
 
 ---
