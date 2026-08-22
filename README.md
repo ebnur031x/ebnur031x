@@ -37,9 +37,9 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake-light.svg">
-    <img src="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake.svg" alt="Live GitHub contribution snake">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake.svg?v=yellow2">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake-light.svg?v=yellow2">
+    <img src="https://raw.githubusercontent.com/ebnur031x/ebnur031x/output/github-snake.svg?v=yellow2" alt="Live GitHub contribution snake">
   </picture>
 </p>
 
