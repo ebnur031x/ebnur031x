@@ -8,7 +8,7 @@
 <rect x="732" y="68" width="336" height="190" rx="12" fill="#0b1119" stroke="#273244"/>
 <text x="752" y="99" fill="#e2e8f0" font-family="Arial,sans-serif" font-size="16" font-weight="700">💻 Top Languages</text>
 <text x="52" y="132" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">Total Stars</text>
-<text x="330" y="132" text-anchor="end" fill="#60a5fa" font-family="Arial,sans-serif" font-size="14" font-weight="700">0</text>
+<text x="330" y="132" text-anchor="end" fill="#60a5fa" font-family="Arial,sans-serif" font-size="14" font-weight="700">1</text>
 <text x="52" y="155" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">Total Commits</text>
 <text x="330" y="155" text-anchor="end" fill="#60a5fa" font-family="Arial,sans-serif" font-size="14" font-weight="700">98</text>
 <text x="52" y="178" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">Repositories</text>
@@ -17,9 +17,9 @@
 <text x="330" y="201" text-anchor="end" fill="#60a5fa" font-family="Arial,sans-serif" font-size="14" font-weight="700">1</text>
 <text x="52" y="224" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">Issues</text>
 <text x="330" y="224" text-anchor="end" fill="#60a5fa" font-family="Arial,sans-serif" font-size="14" font-weight="700">0</text>
-<text x="550" y="165" text-anchor="middle" fill="#4ade80" font-family="Arial,sans-serif" font-size="54" font-weight="700">7</text>
+<text x="550" y="165" text-anchor="middle" fill="#4ade80" font-family="Arial,sans-serif" font-size="54" font-weight="700">8</text>
 <text x="550" y="192" text-anchor="middle" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="14">days in a row</text>
-<text x="550" y="220" text-anchor="middle" fill="#94a3b8" font-family="Arial,sans-serif" font-size="13">Longest: 7 days</text>
+<text x="550" y="220" text-anchor="middle" fill="#94a3b8" font-family="Arial,sans-serif" font-size="13">Longest: 8 days</text>
 <circle cx="752" cy="115" r="7" fill="#f59e0b"/>
 <text x="770" y="120" fill="#e2e8f0" font-family="Arial,sans-serif" font-size="13">JavaScript</text>
 <rect x="850" y="107" width="175" height="10" rx="5" fill="#27303b"/>
